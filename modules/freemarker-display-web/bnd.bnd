@@ -1,0 +1,7 @@
+Bundle-Name: freemarker-display-web
+Bundle-SymbolicName: com.mw.freemarker.display.web
+Bundle-Version: 1.0.0
+Export-Package: com.mw.freemarker.portlet.constants
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
