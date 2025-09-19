@@ -5,8 +5,9 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 import aQute.bnd.annotation.metatype.Meta;
 
 @ExtendedObjectClassDefinition(
-		category = "object",
-	    scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+	category = "object",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE,
+	strictScope = true
 )
 @Meta.OCD(
     id = FreeMarkerDisplayPortletInstanceConfiguration.PID,
