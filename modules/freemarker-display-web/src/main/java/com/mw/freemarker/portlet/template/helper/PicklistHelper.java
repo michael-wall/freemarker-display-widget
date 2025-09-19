@@ -1,4 +1,4 @@
-package com.mw.freemarker.portlet.util;
+package com.mw.freemarker.portlet.template.helper;
 
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.portal.kernel.log.Log;

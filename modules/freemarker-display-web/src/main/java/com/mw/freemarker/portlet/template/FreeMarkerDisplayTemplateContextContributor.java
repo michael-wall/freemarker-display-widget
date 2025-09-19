@@ -1,9 +1,10 @@
-package com.mw.freemarker.portlet;
+package com.mw.freemarker.portlet.template;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
-import com.mw.freemarker.portlet.util.PicklistHelper;
+import com.mw.freemarker.portlet.template.helper.PicklistHelper;
+import com.mw.freemarker.portlet.template.helper.RelationshipHelper;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class FreeMarkerDisplayTemplateContextContributor implements TemplateCont
 	public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
 		
 		contextObjects.put("picklistHelper", new PicklistHelper());
+		contextObjects.put("relationshipHelper", new RelationshipHelper());
 	}	
 	
     private static final Log _log = LogFactoryUtil.getLog(FreeMarkerDisplayTemplateContextContributor.class);	

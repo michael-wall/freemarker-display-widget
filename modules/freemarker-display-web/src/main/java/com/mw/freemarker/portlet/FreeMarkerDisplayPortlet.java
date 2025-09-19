@@ -6,9 +6,11 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -21,6 +23,7 @@ import com.liferay.portal.kernel.template.TemplateException;
 import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.template.engine.TemplateContextHelper;
@@ -119,7 +122,7 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		
 		Map<String, Serializable> templateObjectEntryValues = templateObjectEntry.getValues();
 		
-		// TODO MW: Move these to FreeMarkerDisplayInstanceConfiguration and read from there when the required set of fields is identified...
+		// TODO MW: Consider moving these to FreeMarkerDisplayInstanceConfiguration and read from there when the required set of fields is identified...
 		String templateContent = (String)templateObjectEntryValues.get("templateContent");
 		String templateId = (String)templateObjectEntryValues.get("templateId");
 		String sourceObjectDefinitionERC = (String)templateObjectEntryValues.get("sourceObjectDefinitionERC");
@@ -158,27 +161,38 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			if (ObjectFieldConstants.BUSINESS_TYPE_PICKLIST.equals(objectField.getBusinessType()) || ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST.equals(objectField.getBusinessType())) {
 				long listTypeDefinitionId = objectField.getListTypeDefinitionId();
 				
-				//ListTypeDefinition listTypeDefinition = ListTypeDefinitionLocalServiceUtil.getListTypeDefinition(listTypeDefinitionId);
+				//ListTypeDefinition listTypeDefinition = _listTypeDefinitionLocalService.getListTypeDefinition(listTypeDefinitionId);
 
 				List<ListTypeEntry> picklistEntries = _listTypeEntryLocalService.getListTypeEntries(listTypeDefinitionId);
-				picklistsMap.put(objectField.getName(), picklistEntries);
+				picklistsMap.put(objectField.getName(), picklistEntries); //Using the fieldName for simplify mapping logic
 			}
+		}
+		
+		List<ObjectRelationship> objectRelationships = _objectRelationshipLocalService.getObjectRelationships(sourceObjectDefinition.getObjectDefinitionId());
+		
+		for (ObjectRelationship objectRelationship : objectRelationships) {
+			_log.info("RelationshipName: " + objectRelationship.getName());
 		}
 	
 		try {
 			TemplateResource templateResource = new StringTemplateResource(templateId, templateContent);
-
-			//TemplateConstants.LANG_TYPE_FTL, 
 			Template template = _templateManager.getTemplate(templateResource, true);
-
 			_templateContextHelper.prepare(template, themeDisplay.getRequest());
 			
 			template.put("records", objectEntries);
-			template.put("languageId", "en_US"); //TEMP
-			
+			template.put("objectDefinitionId", sourceObjectDefinition.getObjectDefinitionId());
+			template.put("languageId", LocaleUtil.getDefault().toString()); // Virtual Instance Default Language
+						
 			for (Map.Entry<String, List<ListTypeEntry>> picklist : picklistsMap.entrySet()) {
-			    _log.info("adding picklist with key: " + picklist.getKey());
-				template.put(picklist.getKey(), picklist.getValue());
+				template.put("picklist_" + picklist.getKey(), picklist.getValue());
+				
+				_log.info("Added picklist_" + picklist.getKey());
+			}
+			
+			for (ObjectRelationship objectRelationship : objectRelationships) {
+				template.put("relationship_" + objectRelationship.getName(), objectRelationship);
+				
+				_log.info("Added relationship_" + objectRelationship.getName());
 			}
 			
 			try (PrintWriter writer = renderResponse.getWriter()) {
@@ -237,6 +251,9 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
     
     @Reference
     private ObjectDefinitionLocalService _objectDefinitionLocalService;
+    
+    @Reference
+    private ObjectRelationshipLocalService _objectRelationshipLocalService;
 	
     @Reference
     private ListTypeEntryLocalService _listTypeEntryLocalService;

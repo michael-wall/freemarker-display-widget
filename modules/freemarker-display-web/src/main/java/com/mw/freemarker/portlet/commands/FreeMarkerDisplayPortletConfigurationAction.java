@@ -1,4 +1,4 @@
-package com.mw.freemarker.portlet;
+package com.mw.freemarker.portlet.commands;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
