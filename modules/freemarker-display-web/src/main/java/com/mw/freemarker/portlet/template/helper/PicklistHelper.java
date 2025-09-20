@@ -8,6 +8,12 @@ import com.liferay.portal.kernel.util.Validator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
+@Component(
+	immediate = true,
+	service = PicklistHelper.class
+)
 public class PicklistHelper {
 
 	public String getEntryName(List<ListTypeEntry> picklistEntries, String entryKey, String languageId) {

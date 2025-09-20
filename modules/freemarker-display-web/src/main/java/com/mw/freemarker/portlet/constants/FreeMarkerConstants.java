@@ -5,9 +5,9 @@ public class FreeMarkerConstants {
 		public static final String PICKLIST_PREFIX = "picklist_";
 		public static final String RELATIONSHIP_PREFIX = "relationship_";
 		
-		public static final String RECORDS = "records";
-		public static final String OBJECT_DEFINITION_ID = "objectDefinitionId";
+		public static final String OBJECT_DEFINITION = "objectDefinition";
 		public static final String LANGUAGE_ID = "languageId";
+		public static final String LOCALE = "locale";
 	}
 	
 	public interface CONTEXT_VARIABLES {

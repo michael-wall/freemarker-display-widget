@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true,
@@ -31,11 +32,23 @@ public class FreeMarkerDisplayTemplateContextContributor implements TemplateCont
 	@Override
 	public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
 		
-		//contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.OBJECT_ENTRY_HELPER, new ObjectEntryHelper());
-		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.PICKLIST_HELPER, new PicklistHelper());
-		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.RELATIONSHIP_HELPER, new RelationshipHelper());
-		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.ATTACHMENT_FIELD_HELPER, new AttachmentFieldHelper());
+		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.OBJECT_ENTRY_HELPER, _objectEntryHelper);
+		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.PICKLIST_HELPER, _picklistHelper);
+		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.RELATIONSHIP_HELPER, _relationshipHelper);
+		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.ATTACHMENT_FIELD_HELPER, _attachmentFieldHelper);
 	}	
+	
+    @Reference
+    private ObjectEntryHelper _objectEntryHelper;	
+    
+    @Reference
+    private PicklistHelper _picklistHelper;	
+    
+    @Reference
+    private RelationshipHelper _relationshipHelper;	
+    
+    @Reference
+    private AttachmentFieldHelper _attachmentFieldHelper;	
 	
     private static final Log _log = LogFactoryUtil.getLog(FreeMarkerDisplayTemplateContextContributor.class);	
 }

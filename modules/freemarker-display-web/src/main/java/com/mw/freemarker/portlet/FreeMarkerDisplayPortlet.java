@@ -2,25 +2,21 @@ package com.mw.freemarker.portlet;
 
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
-import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
-import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.template.StringTemplateResource;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateException;
@@ -31,10 +27,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.template.engine.TemplateContextHelper;
-import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
-import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
-import com.liferay.portal.vulcan.pagination.Page;
-import com.liferay.portal.vulcan.pagination.Pagination;
 import com.mw.freemarker.portlet.config.FreeMarkerDisplayInstanceConfiguration;
 import com.mw.freemarker.portlet.config.FreeMarkerDisplayPortletInstanceConfiguration;
 import com.mw.freemarker.portlet.constants.FreeMarkerConstants;
@@ -43,8 +35,6 @@ import com.mw.freemarker.portlet.constants.FreeMarkerDisplayPortletKeys;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -192,11 +182,10 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			Template template = _templateManager.getTemplate(templateResource, true);
 			_templateContextHelper.prepare(template, themeDisplay.getRequest());
 
-			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.OBJECT_DEFINITION_ID, sourceObjectDefinition.getObjectDefinitionId());
+			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.OBJECT_DEFINITION, sourceObjectDefinition);
+			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LOCALE, locale); 
 			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LANGUAGE_ID, locale.toString()); 
-			
-			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.RECORDS, getRecords(sourceObjectDefinition, locale));
-						
+
 			for (Map.Entry<String, List<ListTypeEntry>> picklist : picklistsMap.entrySet()) {
 				String key = FreeMarkerConstants.FREEMARKER_VARIABLES.PICKLIST_PREFIX + picklist.getKey();
 				template.put(key, picklist.getValue());
@@ -251,35 +240,6 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		}		 
 		
 		return null;
-	}	
-	
-	/**
-	 * Retrieve the records and return list of ObjectEntry... this IS permission aware...
-	 */
-	private List<ObjectEntry> getRecords(ObjectDefinition sourceObjectDefinition, Locale locale) {
-		
-		List<ObjectEntry> objectEntries = new ArrayList<ObjectEntry>();
-		
-		try {
-			DTOConverterContext dtoConverterContext = new DefaultDTOConverterContext(null, locale);			
-			Sort[] sort = {new Sort("studentName", false)};
-			
-			Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> page = _objectEntryManager.getObjectEntries(sourceObjectDefinition.getCompanyId(), sourceObjectDefinition, ObjectDefinitionConstants.SCOPE_COMPANY, null, dtoConverterContext, null, Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null, sort);
-		
-			Collection<com.liferay.object.rest.dto.v1_0.ObjectEntry> dtoObjectEntries = page.getItems();
-
-			for (com.liferay.object.rest.dto.v1_0.ObjectEntry dtoObjectEntry : dtoObjectEntries) {
-				ObjectEntry objectEntry = _objectEntryService.fetchObjectEntry(dtoObjectEntry.getId());
-				
-				if (Validator.isNotNull(objectEntry)) objectEntries.add(objectEntry);
-			}
-		} catch (Exception e) {
-			_log.error(e);
-		}
-		
-		_log.info("Source Object ERC: " + sourceObjectDefinition.getExternalReferenceCode() + ", Object Entries: " + objectEntries.size());
-		
-		return objectEntries;
 	}
 	
     @Reference
@@ -308,9 +268,6 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
     
 	@Reference
 	private ConfigurationProvider _configurationProvider;
-	
-	@Reference(target = "(object.entry.manager.storage.type=default)")
-	private ObjectEntryManager _objectEntryManager;
 
     private static final Log _log = LogFactoryUtil.getLog(FreeMarkerDisplayPortlet.class);
 }
