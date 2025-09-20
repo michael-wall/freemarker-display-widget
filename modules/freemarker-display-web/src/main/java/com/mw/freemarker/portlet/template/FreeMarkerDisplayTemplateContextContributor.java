@@ -31,7 +31,7 @@ public class FreeMarkerDisplayTemplateContextContributor implements TemplateCont
 	@Override
 	public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
 		
-		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.OBJECT_ENTRY_HELPER, new ObjectEntryHelper());
+		//contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.OBJECT_ENTRY_HELPER, new ObjectEntryHelper());
 		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.PICKLIST_HELPER, new PicklistHelper());
 		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.RELATIONSHIP_HELPER, new RelationshipHelper());
 		contextObjects.put(FreeMarkerConstants.CONTEXT_VARIABLES.ATTACHMENT_FIELD_HELPER, new AttachmentFieldHelper());

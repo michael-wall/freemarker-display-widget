@@ -8,10 +8,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import java.util.List;
 
+// Class not used currently...
+// Records populated in FreeMarkerDisplayPortlet using its getRecords method...
 public class ObjectEntryHelper {
 
 	public List<ObjectEntry> getRecords(long objectDefinitionId) {
-		// Using ObjectEntryLocalServiceUtil as there is no equivalent methods in ObjectEntryServiceUtil and ObjectEntryHelper is an internal class.
+		// Using ObjectEntryLocalServiceUtil as there is no equivalent methods in ObjectEntryServiceUtil.
 		List<ObjectEntry> objectEntries = ObjectEntryLocalServiceUtil.getObjectEntries(0, objectDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		_log.info("objectEntries size: " + objectEntries.size());	
