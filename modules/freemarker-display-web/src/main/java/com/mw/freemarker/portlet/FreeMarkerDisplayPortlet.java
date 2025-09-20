@@ -12,7 +12,6 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
@@ -58,7 +57,6 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.name=" + FreeMarkerDisplayPortletKeys.FREEMARKER_DISPLAY_PORTLET,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.expiration-cache=0",
-		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.version=3.0"
 	},
 	service = Portlet.class
@@ -136,18 +134,6 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		String templateContent = (String)templateObjectEntryValues.get("templateContent");
 		String templateId = (String)templateObjectEntryValues.get("templateId");
 		
-		List<ObjectEntry> objectEntries = _objectEntryLocalService.getObjectEntries(0, sourceObjectDefinition.getObjectDefinitionId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-		
-		_log.info("objectEntries size: " + objectEntries.size());	
-		
-		for (ObjectEntry objectEntry: objectEntries) {
-			Map<String, Serializable> objectEntryValues = objectEntry.getValues();
-
-			for (Map.Entry<String, Serializable> field : objectEntryValues.entrySet()) {
-				_log.info(field.getKey() + " >> " + field.getValue().getClass() + " >> " + field.getValue());
-			}
-		}
-		
 		List<ObjectField> objectFields = _objectFieldLocalService.getObjectFields(sourceObjectDefinition.getObjectDefinitionId());
 		
 		Map<String, List<ListTypeEntry>> picklistsMap = new HashMap<String, List<ListTypeEntry>>();
@@ -172,8 +158,7 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			TemplateResource templateResource = new StringTemplateResource(templateId, templateContent);
 			Template template = _templateManager.getTemplate(templateResource, true);
 			_templateContextHelper.prepare(template, themeDisplay.getRequest());
-			
-			template.put("records", objectEntries);
+
 			template.put("objectDefinitionId", sourceObjectDefinition.getObjectDefinitionId());
 			template.put("languageId", LocaleUtil.getDefault().toString()); // Virtual Instance Default Language
 						
@@ -235,13 +220,13 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
     private TemplateManager _templateManager;
 
     @Reference
-    private TemplateContextHelper _templateContextHelper;	
-	
-    @Reference
-    private ObjectEntryLocalService _objectEntryLocalService;
+    private TemplateContextHelper _templateContextHelper;
 
     @Reference
     private ObjectFieldLocalService _objectFieldLocalService;
+    
+    @Reference
+    private ObjectEntryLocalService _objectEntryLocalService;
     
     @Reference
     private ObjectDefinitionLocalService _objectDefinitionLocalService;

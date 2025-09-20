@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.mw.freemarker.portlet.template.helper.AttachmentFieldHelper;
+import com.mw.freemarker.portlet.template.helper.ObjectEntryHelper;
 import com.mw.freemarker.portlet.template.helper.PicklistHelper;
 import com.mw.freemarker.portlet.template.helper.RelationshipHelper;
 
@@ -29,6 +30,7 @@ public class FreeMarkerDisplayTemplateContextContributor implements TemplateCont
 	@Override
 	public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
 		
+		contextObjects.put("objectEntryHelper", new ObjectEntryHelper());
 		contextObjects.put("picklistHelper", new PicklistHelper());
 		contextObjects.put("relationshipHelper", new RelationshipHelper());
 		contextObjects.put("attachmentFieldHelper", new AttachmentFieldHelper());

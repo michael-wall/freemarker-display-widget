@@ -16,7 +16,7 @@ public class RelationshipHelper {
 	public List<ObjectEntry> getRecords(ObjectRelationship objectRelationship, long objectEntryId) {
 		
 		try {
-			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(objectRelationship.getCompanyId(), objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			
 			return relatedOjectEntries;
 		} catch (PortalException e) {
@@ -28,8 +28,10 @@ public class RelationshipHelper {
 	
 	public long getRecordCount(ObjectRelationship objectRelationship, long objectEntryId) {
 		
+		_log.info(objectRelationship.getObjectRelationshipId() + ", " + objectEntryId);
+		
 		try {
-			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(objectRelationship.getCompanyId(), objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			
 			return relatedOjectEntries.size();
 		} catch (PortalException e) {

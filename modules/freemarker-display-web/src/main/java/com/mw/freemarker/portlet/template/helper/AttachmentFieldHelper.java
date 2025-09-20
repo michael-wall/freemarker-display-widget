@@ -42,10 +42,9 @@ public class AttachmentFieldHelper {
 	        long kbSize = (long) Math.ceil((double) size / KB);
 	        return kbSize + " KB";
 	    } else {
-	        long mbSize = (long) Math.ceil((double) size / MB);
-	        return mbSize + " MB";
+	        double mbSize = (double) size / MB;
+	        return String.format("%.2f MB", mbSize);
 	    }
 	}
-
     private static final Log _log = LogFactoryUtil.getLog(AttachmentFieldHelper.class);	
 }
