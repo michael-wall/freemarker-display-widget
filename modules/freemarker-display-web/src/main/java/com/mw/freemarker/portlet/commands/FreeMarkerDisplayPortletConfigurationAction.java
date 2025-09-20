@@ -29,7 +29,11 @@ public class FreeMarkerDisplayPortletConfigurationAction extends DefaultConfigur
 		throws Exception {
 
 		String templateObjectEntryExternalReferenceCode = ParamUtil.getString(actionRequest, "templateObjectEntryExternalReferenceCode");
-	
+		String sourceObjectDefinitionExternalReferenceCode = ParamUtil.getString(actionRequest, "sourceObjectDefinitionExternalReferenceCode");
+
+		boolean templateERCValid = false;
+		boolean sourceERCValid = false;
+		
 		if (Validator.isNull(templateObjectEntryExternalReferenceCode)) {
 			SessionErrors.add(actionRequest, "template-object-entry-external-reference-code-required");
 		} else {
@@ -40,8 +44,27 @@ public class FreeMarkerDisplayPortletConfigurationAction extends DefaultConfigur
 			} else if (!FreeMarkerPortletValidator.isValidERC(templateObjectEntryExternalReferenceCode)) {
 				SessionErrors.add(actionRequest, "template-object-entry-external-reference-code-invalid");
 			} else {
-				setPreference(actionRequest, "templateObjectEntryExternalReferenceCode", templateObjectEntryExternalReferenceCode);	
+				templateERCValid = true;
 			}
+		}
+		
+		if (Validator.isNull(sourceObjectDefinitionExternalReferenceCode)) {
+			SessionErrors.add(actionRequest, "source-object-definition-external-reference-code-required");
+		} else {
+			sourceObjectDefinitionExternalReferenceCode = sourceObjectDefinitionExternalReferenceCode.trim();
+			
+			if (sourceObjectDefinitionExternalReferenceCode.length() > FreeMarkerPortletValidator.ERC_MAX_LENGTH) {
+				SessionErrors.add(actionRequest, "source-object-definition-external-reference-code-length");
+			} else if (!FreeMarkerPortletValidator.isValidERC(sourceObjectDefinitionExternalReferenceCode)) {
+				SessionErrors.add(actionRequest, "source-object-definition-external-reference-code-invalid");
+			} else {
+				sourceERCValid = true;	
+			}
+		}
+		
+		if (templateERCValid && sourceERCValid) {
+			setPreference(actionRequest, "templateObjectEntryExternalReferenceCode", templateObjectEntryExternalReferenceCode);	
+			setPreference(actionRequest, "sourceObjectDefinitionExternalReferenceCode", sourceObjectDefinitionExternalReferenceCode);
 		}
 		
 		super.processAction(portletConfig, actionRequest, actionResponse);

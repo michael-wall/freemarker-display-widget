@@ -81,7 +81,7 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		FreeMarkerDisplayInstanceConfiguration instanceConfig = getConfig(themeDisplay.getCompanyId());
 		
 		if (Validator.isNull(instanceConfig) || Validator.isNull(instanceConfig.templateObjectDefinitionExternalReferenceCode())) {
-			_log.info("Instance Settings not present, unable to proceed...");
+			_log.info("Instance Settings missing, unable to proceed...");
 		
 			include("/configurationMissing.jsp", renderRequest, renderResponse);
 			
@@ -90,7 +90,8 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		
 		FreeMarkerDisplayPortletInstanceConfiguration portletInstanceConfig = getConfig(themeDisplay, portletId);
 		
-		if (Validator.isNull(portletInstanceConfig) || Validator.isNull(portletInstanceConfig.templateObjectEntryExternalReferenceCode())) {
+		if (Validator.isNull(portletInstanceConfig) || Validator.isNull(portletInstanceConfig.templateObjectEntryExternalReferenceCode())
+				|| Validator.isNull(portletInstanceConfig.sourceObjectDefinitionExternalReferenceCode())) {
 			_log.info("Portlet Instance Configuration not present, unable to proceed...");
 		
 			include("/configurationMissing.jsp", renderRequest, renderResponse);
@@ -99,21 +100,31 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		}
 		
 		ObjectDefinition templateObjectDefinition = _objectDefinitionLocalService.fetchObjectDefinitionByExternalReferenceCode(instanceConfig.templateObjectDefinitionExternalReferenceCode(), themeDisplay.getCompanyId());
-
+		
 		if (Validator.isNull(templateObjectDefinition)) {
-			_log.info("Template Object Definition not present, unable to proceed...");
+			_log.info("Template Object Definition missing, unable to proceed...");
 			
 			include("/templateObjectDefinitionMissing.jsp", renderRequest, renderResponse);
 			
 			return;
 		}
+		
+		ObjectDefinition sourceObjectDefinition = _objectDefinitionLocalService.fetchObjectDefinitionByExternalReferenceCode(portletInstanceConfig.sourceObjectDefinitionExternalReferenceCode(), themeDisplay.getCompanyId());		
+		
+		if (Validator.isNull(sourceObjectDefinition)) {
+			_log.info("Source Object Definition missing, unable to proceed...");
+			
+			include("/sourceObjectDefinitionMissing.jsp", renderRequest, renderResponse);
+			
+			return;
+		}		
 
 		String templateObjectEntryExternalReferenceCode = portletInstanceConfig.templateObjectEntryExternalReferenceCode();
 		
 		ObjectEntry templateObjectEntry = _objectEntryLocalService.fetchObjectEntry(templateObjectEntryExternalReferenceCode, templateObjectDefinition.getObjectDefinitionId());
 		
 		if (Validator.isNull(templateObjectEntry)) {
-			_log.info("Template Object Entry not present, unable to proceed...");
+			_log.info("Template Object Entry missing, unable to proceed...");
 			
 			include("/templateObjectEntryMissing.jsp", renderRequest, renderResponse);
 			
@@ -122,20 +133,8 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		
 		Map<String, Serializable> templateObjectEntryValues = templateObjectEntry.getValues();
 		
-		// TODO MW: Consider moving these to FreeMarkerDisplayInstanceConfiguration and read from there when the required set of fields is identified...
 		String templateContent = (String)templateObjectEntryValues.get("templateContent");
 		String templateId = (String)templateObjectEntryValues.get("templateId");
-		String sourceObjectDefinitionERC = (String)templateObjectEntryValues.get("sourceObjectDefinitionERC");
-		
-		ObjectDefinition sourceObjectDefinition = _objectDefinitionLocalService.fetchObjectDefinitionByExternalReferenceCode(sourceObjectDefinitionERC, themeDisplay.getCompanyId());
-	
-		if (Validator.isNull(sourceObjectDefinition)) {
-			_log.info("Source Object Definition not present, unable to proceed...");
-			
-			include("/sourceObjectDefinitionMissing.jsp", renderRequest, renderResponse);
-			
-			return;
-		}
 		
 		List<ObjectEntry> objectEntries = _objectEntryLocalService.getObjectEntries(0, sourceObjectDefinition.getObjectDefinitionId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 		
@@ -149,8 +148,6 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			}
 		}
 		
-		// TEMP START
-		
 		List<ObjectField> objectFields = _objectFieldLocalService.getObjectFields(sourceObjectDefinition.getObjectDefinitionId());
 		
 		Map<String, List<ListTypeEntry>> picklistsMap = new HashMap<String, List<ListTypeEntry>>();
@@ -160,11 +157,8 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 
 			if (ObjectFieldConstants.BUSINESS_TYPE_PICKLIST.equals(objectField.getBusinessType()) || ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST.equals(objectField.getBusinessType())) {
 				long listTypeDefinitionId = objectField.getListTypeDefinitionId();
-				
-				//ListTypeDefinition listTypeDefinition = _listTypeDefinitionLocalService.getListTypeDefinition(listTypeDefinitionId);
-
 				List<ListTypeEntry> picklistEntries = _listTypeEntryLocalService.getListTypeEntries(listTypeDefinitionId);
-				picklistsMap.put(objectField.getName(), picklistEntries); //Using the fieldName for simplify mapping logic
+				picklistsMap.put(objectField.getName(), picklistEntries); //Using the fieldName to simplify mapping logic
 			}
 		}
 		

@@ -24,4 +24,12 @@ public interface FreeMarkerDisplayPortletInstanceConfiguration {
         description = "template-object-entry-external-reference-code-description"
     )
     public String templateObjectEntryExternalReferenceCode();
+    
+    @Meta.AD(
+            required = false,
+            deflt = "",
+            name = "source-object-definition-external-reference-code",
+            description = "source-object-definition-external-reference-code-description"
+        )
+        public String sourceObjectDefinitionExternalReferenceCode();    
 }
