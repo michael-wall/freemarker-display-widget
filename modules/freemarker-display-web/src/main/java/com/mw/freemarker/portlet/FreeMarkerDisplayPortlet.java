@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.template.engine.TemplateContextHelper;
 import com.mw.freemarker.portlet.config.FreeMarkerDisplayInstanceConfiguration;
 import com.mw.freemarker.portlet.config.FreeMarkerDisplayPortletInstanceConfiguration;
+import com.mw.freemarker.portlet.constants.FreeMarkerConstants;
 import com.mw.freemarker.portlet.constants.FreeMarkerDisplayPortletKeys;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = Portlet.class
 )
-public class FreeMarkerDisplayPortlet extends MVCPortlet {	
+public class FreeMarkerDisplayPortlet extends MVCPortlet {
 	
 	@Activate
     protected void activate(Map<String, Object> properties) throws Exception {		
@@ -78,8 +79,10 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 
 		FreeMarkerDisplayInstanceConfiguration instanceConfig = getConfig(themeDisplay.getCompanyId());
 		
-		if (Validator.isNull(instanceConfig) || Validator.isNull(instanceConfig.templateObjectDefinitionExternalReferenceCode())) {
-			_log.info("Instance Settings missing, unable to proceed...");
+		if (Validator.isNull(instanceConfig) || Validator.isNull(instanceConfig.templateObjectDefinitionExternalReferenceCode())
+				|| Validator.isNull(instanceConfig.templateId())
+						|| Validator.isNull(instanceConfig.templateContent())) {
+			_log.info("Instance Settings or field values missing, unable to proceed...");
 		
 			include("/configurationMissing.jsp", renderRequest, renderResponse);
 			
@@ -130,9 +133,25 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 		}
 		
 		Map<String, Serializable> templateObjectEntryValues = templateObjectEntry.getValues();
+	
+		if (!templateObjectEntryValues.containsKey(instanceConfig.templateId()) || !templateObjectEntryValues.containsKey(instanceConfig.templateContent())) {
+			_log.info("Template Object Entry Field(s) missing, unable to proceed...");
+			
+			include("/templateObjectEntryDetailsMissing.jsp", renderRequest, renderResponse);
+			
+			return;	
+		}
 		
-		String templateContent = (String)templateObjectEntryValues.get("templateContent");
-		String templateId = (String)templateObjectEntryValues.get("templateId");
+		String templateId = (String)templateObjectEntryValues.get(instanceConfig.templateId());
+		String templateContent = (String)templateObjectEntryValues.get(instanceConfig.templateContent());
+		
+		if (Validator.isNull(templateId) || Validator.isNull(templateContent)) {
+			_log.info("Template Object Entry Field Value(s) missing, unable to proceed...");
+			
+			include("/templateObjectEntryDetailsMissing.jsp", renderRequest, renderResponse);
+			
+			return;	
+		}
 		
 		List<ObjectField> objectFields = _objectFieldLocalService.getObjectFields(sourceObjectDefinition.getObjectDefinitionId());
 		
@@ -159,19 +178,21 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			Template template = _templateManager.getTemplate(templateResource, true);
 			_templateContextHelper.prepare(template, themeDisplay.getRequest());
 
-			template.put("objectDefinitionId", sourceObjectDefinition.getObjectDefinitionId());
-			template.put("languageId", LocaleUtil.getDefault().toString()); // Virtual Instance Default Language
+			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.OBJECT_DEFINITION_ID, sourceObjectDefinition.getObjectDefinitionId());
+			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LANGUAGE_ID, LocaleUtil.getDefault().toString()); // Virtual Instance Default Language
 						
 			for (Map.Entry<String, List<ListTypeEntry>> picklist : picklistsMap.entrySet()) {
-				template.put("picklist_" + picklist.getKey(), picklist.getValue());
+				String key = FreeMarkerConstants.FREEMARKER_VARIABLES.PICKLIST_PREFIX + picklist.getKey();
+				template.put(key, picklist.getValue());
 				
-				_log.info("Added picklist_" + picklist.getKey());
+				_log.info("Added " + key);
 			}
 			
 			for (ObjectRelationship objectRelationship : objectRelationships) {
-				template.put("relationship_" + objectRelationship.getName(), objectRelationship);
+				String key = FreeMarkerConstants.FREEMARKER_VARIABLES.RELATIONSHIP_PREFIX + objectRelationship.getName();
+				template.put(key, objectRelationship);
 				
-				_log.info("Added relationship_" + objectRelationship.getName());
+				_log.info("Added " + key);
 			}
 			
 			try (PrintWriter writer = renderResponse.getWriter()) {

@@ -27,9 +27,7 @@ public class RelationshipHelper {
 	}
 	
 	public long getRecordCount(ObjectRelationship objectRelationship, long objectEntryId) {
-		
-		_log.info(objectRelationship.getObjectRelationshipId() + ", " + objectEntryId);
-		
+				
 		try {
 			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			
