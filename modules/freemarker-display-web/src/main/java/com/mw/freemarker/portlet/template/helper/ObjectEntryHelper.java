@@ -11,8 +11,9 @@ import java.util.List;
 public class ObjectEntryHelper {
 
 	public List<ObjectEntry> getRecords(long objectDefinitionId) {
+		// Using ObjectEntryLocalServiceUtil as there is no equivalent methods in ObjectEntryServiceUtil and ObjectEntryHelper is an internal class.
 		List<ObjectEntry> objectEntries = ObjectEntryLocalServiceUtil.getObjectEntries(0, objectDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-		
+
 		_log.info("objectEntries size: " + objectEntries.size());	
 		
 //		for (ObjectEntry objectEntry: objectEntries) {

@@ -2,7 +2,7 @@ package com.mw.freemarker.portlet.template.helper;
 
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectRelationship;
-import com.liferay.object.service.ObjectEntryLocalServiceUtil;
+import com.liferay.object.service.ObjectEntryServiceUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -16,7 +16,7 @@ public class RelationshipHelper {
 	public List<ObjectEntry> getRecords(ObjectRelationship objectRelationship, long objectEntryId) {
 		
 		try {
-			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			List<ObjectEntry> relatedOjectEntries = ObjectEntryServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			
 			return relatedOjectEntries;
 		} catch (PortalException e) {
@@ -29,7 +29,7 @@ public class RelationshipHelper {
 	public long getRecordCount(ObjectRelationship objectRelationship, long objectEntryId) {
 				
 		try {
-			List<ObjectEntry> relatedOjectEntries = ObjectEntryLocalServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			List<ObjectEntry> relatedOjectEntries = ObjectEntryServiceUtil.getOneToManyObjectEntries(0, objectRelationship.getObjectRelationshipId(), objectEntryId, true, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			
 			return relatedOjectEntries.size();
 		} catch (PortalException e) {

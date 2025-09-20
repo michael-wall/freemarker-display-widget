@@ -1,6 +1,6 @@
 package com.mw.freemarker.portlet.template.helper;
 
-import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.document.library.util.DLURLHelperUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -16,7 +16,7 @@ public class AttachmentFieldHelper {
 	public AttachmentFieldFile getAttachmentURL(ThemeDisplay themeDisplay, long fileEntryId) {
 		
 		try {
-			FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
+			FileEntry fileEntry = DLAppServiceUtil.getFileEntry(fileEntryId);
 			FileVersion fileVersion = fileEntry.getFileVersion();
 			
 	        String fileUrl = DLURLHelperUtil.getDownloadURL(
