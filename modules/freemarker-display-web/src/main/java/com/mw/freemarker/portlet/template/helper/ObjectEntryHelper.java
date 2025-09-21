@@ -4,11 +4,11 @@ import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
-import com.liferay.object.service.ObjectEntryLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
@@ -31,20 +31,20 @@ import org.osgi.service.component.annotations.Reference;
 public class ObjectEntryHelper {
 
 	/**
-	 * Retrieve the records and return list of ObjectEntry... this IS NOT permission aware...
+	 * Retrieve the records and return list of ObjectEntry... this IS NOT permission aware and is for Company Scoped only.
 	 * 
 	 * Usage example: <#assign records = objectEntryHelper.getRecords(objectDefinition.objectDefinitionId)>
 	 * 
 	 */
-	public List<ObjectEntry> getRecords(long objectDefinitionId) {
-		
-		// <#assign records = objectEntryHelper.getRecords(objectDefinition.objectDefinitionId)>
-		
-		// Using ObjectEntryLocalServiceUtil as there is no equivalent methods in ObjectEntryServiceUtil.
-		List<ObjectEntry> objectEntries = ObjectEntryLocalServiceUtil.getObjectEntries(0, objectDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-		_log.info("objectEntries size: " + objectEntries.size());	
-		
+//	public List<ObjectEntry> getRecords(long objectDefinitionId) {
+//		
+//		// <#assign records = objectEntryHelper.getRecords(objectDefinition.objectDefinitionId)>
+//		
+//		// Using ObjectEntryLocalServiceUtil as there is no equivalent methods in ObjectEntryServiceUtil.
+//		List<ObjectEntry> objectEntries = ObjectEntryLocalServiceUtil.getObjectEntries(0, objectDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+//
+//		_log.info("objectEntries size: " + objectEntries.size());	
+//		
 //		for (ObjectEntry objectEntry: objectEntries) {
 //			Map<String, Serializable> objectEntryValues = objectEntry.getValues();
 //
@@ -52,26 +52,32 @@ public class ObjectEntryHelper {
 //				_log.info(field.getKey() + " >> " + field.getValue().getClass() + " >> " + field.getValue());
 //			}
 //		}
-		
-		return objectEntries;
-	}
-	
+//		
+//		return objectEntries;
+//	}
+//	
 	/**
 	 * Retrieve the records and return list of ObjectEntry... this IS permission aware...
 	 * 
 	 * Usage example: <#assign records = objectEntryHelper.getRecords("studentName", true, objectDefinition, locale)>
 	 * 
 	 */
-	public List<ObjectEntry> getRecords(String sortFieldName, boolean sortAscending, ObjectDefinition sourceObjectDefinition, Locale locale) {
+	public List<ObjectEntry> getRecords(String sortFieldName, boolean sortAscending, ObjectDefinition sourceObjectDefinition, Locale locale, Group siteGroup) {
 		
 		List<ObjectEntry> objectEntries = new ArrayList<ObjectEntry>();
 		
 		try {
 			DTOConverterContext dtoConverterContext = new DefaultDTOConverterContext(null, locale);			
-			Sort[] sort = {new Sort(sortFieldName, !sortAscending)}; // Temporaty hard
+			Sort[] sort = {new Sort(sortFieldName, !sortAscending)};
 			
-			Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> page = _objectEntryManager.getObjectEntries(sourceObjectDefinition.getCompanyId(), sourceObjectDefinition, ObjectDefinitionConstants.SCOPE_COMPANY, null, dtoConverterContext, null, Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null, sort);
-		
+			String scopeKey = null;
+			
+			if (sourceObjectDefinition.getScope().equalsIgnoreCase(ObjectDefinitionConstants.SCOPE_SITE)) {
+				scopeKey = siteGroup.getGroupKey();
+			}
+			
+			Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> page = _objectEntryManager.getObjectEntries(sourceObjectDefinition.getCompanyId(), sourceObjectDefinition, scopeKey, null, dtoConverterContext, null, Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null, sort);
+			
 			Collection<com.liferay.object.rest.dto.v1_0.ObjectEntry> dtoObjectEntries = page.getItems();
 
 			for (com.liferay.object.rest.dto.v1_0.ObjectEntry dtoObjectEntry : dtoObjectEntries) {
