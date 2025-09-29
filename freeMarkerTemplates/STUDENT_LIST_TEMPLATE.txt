@@ -1,0 +1,25 @@
+<#assign records = objectEntryHelper.getRecords("studentName", true, objectDefinition, locale, themeDisplay.siteGroup)>
+Student count: ${records?size}<br/><br />
+
+<#list records as cur_rec>
+
+<h2>Student Name: ${cur_rec.values["studentName"]} | Student Number: ${cur_rec.values["studentNumber"]} </h2>
+<br />
+<strong>Department: </strong>${picklistHelper.getEntryName(picklist_department, cur_rec.values["department"], languageId)} <br />
+<#assign skills = picklistHelper.getEntryNamesList(picklist_skills, cur_rec.values["skills"], languageId)>
+<strong>Skills count: </strong>${skills?size} 
+<br />
+<strong>Skills:</strong>
+<#list skills as cur_skill>
+<br /><strong> - Skill Name: </strong>${cur_skill}
+</#list>
+<br/>
+<strong>Attachment count: </strong>${relationshipHelper.getRecordCount(relationship_studentAttachments, cur_rec.objectEntryId)}
+<br /><strong> Attachments:</strong>
+<#assign attachments = relationshipHelper.getRecordsSorted(relationship_studentAttachments, cur_rec.objectEntryId, languageId)>
+<#list attachments as cur_attachment>
+<#assign attachment = attachmentFieldHelper.getAttachmentURL(themeDisplay, cur_attachment.values.file)>
+<br /> - <a href="${attachment.url}">${cur_attachment.values.name} [${attachmentFieldHelper.sizeFormatted(attachment.size)}]</a>
+</#list>
+<br /><br />
+</#list>

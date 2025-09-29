@@ -1,0 +1,48 @@
+<#assign records = objectEntryHelper.getRecords("studentName", true, objectDefinition, locale, themeDisplay.siteGroup)>
+Student count: ${records?size}<br/><br />
+
+<table border="1" cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Department</th>
+            <th>Skills count</th>
+            <th>Skills</th>
+            <th>Attachment count</th>
+            <th>Attachments</th>
+        </tr>
+    </thead>
+    <tbody>
+        <#list records as cur_rec>
+            <#-- Department -->
+            <#assign department = picklistHelper.getEntryName(picklist_department, cur_rec.values["department"], languageId)>
+
+            <#-- Skills -->
+            <#assign skills = picklistHelper.getEntryNamesList(picklist_skills, cur_rec.values["skills"], languageId)>
+
+            <#-- Attachments -->
+            <#assign attachmentCount = relationshipHelper.getRecordCount(relationship_studentAttachments, cur_rec.objectEntryId)>
+            <#assign attachments = relationshipHelper.getRecordsSorted(relationship_studentAttachments, cur_rec.objectEntryId, languageId)>
+
+            <tr>
+                <td>${cur_rec.values["studentName"]}</td>
+                <td>${cur_rec.values["studentNumber"]}</td>
+                <td>${department}</td>
+                <td>${skills?size}</td>
+                <td>
+                    <#list skills as cur_skill>
+                        ${cur_skill}<#if cur_skill_has_next>, </#if>
+                    </#list>
+                </td>
+                <td>${attachmentCount}</td>
+                <td>
+                    <#list attachments as cur_attachment>
+                        <#assign attachment = attachmentFieldHelper.getAttachmentURL(themeDisplay, cur_attachment.values.file)>
+                        <a href="${attachment.url}">${cur_attachment.values.name} [${attachmentFieldHelper.sizeFormatted(attachment.size)}]</a><br/>
+                    </#list>
+                </td>
+            </tr>
+        </#list>
+    </tbody>
+</table>
