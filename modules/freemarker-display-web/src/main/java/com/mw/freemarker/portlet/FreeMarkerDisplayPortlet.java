@@ -204,9 +204,9 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 				template.processTemplate(writer);
 			}
 		} catch (TemplateException e) {
-			_log.error(e);
+			_log.info(e.getClass() + ": " + e.getMessage(), e);
 		} catch (IOException e) {
-			_log.error(e);
+			_log.info(e.getClass() + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -222,7 +222,7 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			
 			return config;	
 		} catch (ConfigurationException e) {
-			_log.error(e);
+			_log.info(e.getClass() + ": " + e.getMessage(), e);
 		}
 		
 		return null;
@@ -236,7 +236,7 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			
 			return config;	
 		} catch (ConfigurationException e) {
-			_log.error(e);
+			_log.info(e.getClass() + ": " + e.getMessage(), e);
 		}		 
 		
 		return null;

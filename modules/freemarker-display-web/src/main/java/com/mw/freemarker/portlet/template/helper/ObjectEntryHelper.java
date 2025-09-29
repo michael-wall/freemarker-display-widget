@@ -76,7 +76,7 @@ public class ObjectEntryHelper {
 			    objectEntriesMap.put(objectEntry.getObjectEntryId(), objectEntry);
 			}			
 		} catch (Exception e) {
-			_log.error(e);
+			_log.info(e.getClass() + ": " + e.getMessage(), e);
 		}
 		
 		_log.info("Source Object ERC: " + sourceObjectDefinition.getExternalReferenceCode() + ", Object Entries: " + objectEntries.size());

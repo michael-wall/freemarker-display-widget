@@ -35,7 +35,7 @@ public class AttachmentFieldHelper {
 	        
 	        return new AttachmentFieldFile(fileUrl, fileEntry.getSize());
 		} catch (PortalException e) {
-			_log.error(e);
+			_log.info(e.getClass() + ": " + e.getMessage(), e);
 		}
 		
         return null;
