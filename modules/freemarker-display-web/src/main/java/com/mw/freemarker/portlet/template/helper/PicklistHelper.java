@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
@@ -32,22 +33,22 @@ public class PicklistHelper {
 	public String getEntryNames(List<ListTypeEntry> picklistEntries, String entryKeys, String languageId) {
 		if (Validator.isNull(entryKeys)) return entryKeys;
 		if (Validator.isNull(picklistEntries) || picklistEntries.isEmpty()) return entryKeys;
-		
+
 		String[] entryKeysArray = entryKeys.split(",");
-		
-		String entryNames = "";
+		String[] entryNamesArray = new String[entryKeysArray.length];
 		
 		for (int i = 0; i < entryKeysArray.length; i++) {
 			String entryKey = entryKeysArray[i].trim();
 		
 	        for (ListTypeEntry picklistEntry : picklistEntries) {
 	        	if (picklistEntry.getKey().equalsIgnoreCase(entryKey)) {
-	        		if (entryNames.length() > 0) entryNames += ", ";
-	        		
-	        		entryNames += picklistEntry.getName(languageId);
+	        		entryNamesArray[i] = picklistEntry.getName(languageId);
 	        	}
 	        }
 		}
+		
+		Arrays.sort(entryNamesArray);
+        String entryNames = String.join(", ", entryNamesArray);
 		
 		if (Validator.isNull(entryNames)) return entryKeys;
 		
@@ -71,6 +72,8 @@ public class PicklistHelper {
 	        	}
 	        }
 		}
+		
+		entryNames.sort(String.CASE_INSENSITIVE_ORDER);
 		
 		return entryNames;
 	}
