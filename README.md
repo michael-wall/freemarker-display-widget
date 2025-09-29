@@ -34,11 +34,39 @@
 - A DDL Select Multiple is an Objects Multiselect Picklist Field.
 - A DDL Documents and Media is an Objects Attachment Field.
 - A DDL Repeatable Field is implemented as an Objects Relationship.
-- Helper classes provided in FreeMarker context
-  - AttachmentFieldHelper for rendering File Links e.g. with Label and Size.
-  - ObjectEntryHelper for retrieving the records with default sort etc.
-  - PicklistHelper for working with Picklists.
-  - RelationshipHelper.java for working with Relationships.
+
+## Custom Helper Classes ##
+- Custom helper classes are provided in the FreeMarker context as follows:
+  - ObjectEntryHelper
+  - PicklistHelper
+  - RelationshipHelper
+  - AttachmentFieldHelper
+- These help reduce the complexity of the FreeMarker templates and also remove the need to use serviceLocator for example.
+
+## ObjectEntryHelper ##
+- ObjectEntryHelper for retrieving the records with default sort etc.
+```
+<#assign records = objectEntryHelper.getRecords("studentName", true, objectDefinition, locale, themeDisplay.siteGroup)>
+```
+## PicklistHelper ##
+- PicklistHelper for working with Picklists.
+```
+<#assign department = picklistHelper.getEntryName(picklist_department, cur_rec.values["department"], languageId)>
+```
+```
+<#assign skills = picklistHelper.getEntryNamesList(picklist_skills, cur_rec.values["skills"], languageId)>
+```
+## RelationshipHelper ##
+- RelationshipHelper for working with Relationships.
+```
+<#assign attachments = relationshipHelper.getRecordsSorted(relationship_studentAttachments, cur_rec.objectEntryId, languageId)>
+```
+## AttachmentFieldHelper ##
+- AttachmentFieldHelper for rendering File Links e.g. with Label and Size.
+```
+<#assign attachment = attachmentFieldHelper.getAttachmentURL(themeDisplay, cur_attachment.values.file)>
+<a href="${attachment.url}">${cur_attachment.values.name} [${attachmentFieldHelper.sizeFormatted(attachment.size)}]</a><br/>
+```
 
 ## Setup ##
 - Build and deploy the OSGi module com.mw.freemarker.display.web-1.0.0.jar.
@@ -82,13 +110,19 @@
   - Open the Widget Configuration, populate the following values and Save:
     - Template Object Entry ERC: STUDENT_GRID_TEMPLATE
     - Source Object Definition ERC: STUDENT
+- Optionally set Look and Feel Configuration > Application Decorators to 'Barebone' and Save.
+
+## Sample Screenshots ##
 - The Student data should be displayed as follows:
-- /screenshots/student_grid.jpg
-- /screenshots/student_list.jpg
+  - Student Grid:
+![Student Grid](screenshots/student_grid.jpg)
+  - Student List:
+![Student List](screenshots/student_list.jpg)
 
 ## Known Limitations / TODO ##
 - The implementation doesn't currently handle Many to Many relationships. Additonal methods in required in RelationshipHelper.java to support.
 - Further approvements can be made e.g. to add support for composite sort to ObjectEntryHelper getRecords method.
+- Additional Helper classes can easily be added for reusable code to reduce the complexity of the FreeMarker templates.
 - The DDL 'Display Templates' feature was not intended for displaying large quantities of data, the same applies to this widget.
 
 ## Environment ##
