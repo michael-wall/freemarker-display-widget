@@ -3,7 +3,7 @@
 - The Liferay DDL functionality is deprecated and marked for removal.
   - Liferay Objects is the replacement for DDL.
   -  See [here](https://learn.liferay.com/w/dxp/low-code/forms/dynamic-data-lists/migrating-to-liferay-objects) for more information on DDL to Liferay Objects migration.
-- This widget was built as a POC for the use case of a customer migrating existing DDL Lists to Liferay Objects.
+- This widget was built as a POC for the use case of a customer migrating existing DDL Lists to Liferay Objects where the customer use the DDL 'Display Templates' functionality.
 - It is intended as a replacement for the DDL 'Display Templates' functionality for DDL Lists that have been migrated from DDL to Liferay Objects.
 
 ## Features ##
