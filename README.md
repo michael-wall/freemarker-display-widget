@@ -53,6 +53,7 @@
 ```
 ## PicklistHelper ##
 - PicklistHelper for working with Picklists.
+- getEntryNames and getEntryNamesList are sorted by Picklist item name.
 ```
 <#assign department = picklistHelper.getEntryName(picklist_department, cur_rec.values["department"], languageId)>
 ```
@@ -61,6 +62,7 @@
 ```
 ## RelationshipHelper ##
 - RelationshipHelper for working with Relationships.
+- getRecordsSorted sorts by the Title value set on the Object Definition.
 ```
 <#assign attachments = relationshipHelper.getRecordsSorted(relationship_studentAttachments, cur_rec.objectEntryId, languageId)>
 ```
@@ -123,10 +125,11 @@
 ![Student List](screenshots/student_list.jpg)
 
 ## Known Limitations / TODO ##
-- The implementation doesn't currently handle Many to Many relationships. Additonal methods in required in RelationshipHelper.java to support.
+- The implementation doesn't currently handle Many to Many relationships. Additional methods can be added to RelationshipHelper.java to support Many to Many relationships.
 - Further approvements can be made e.g. to add support for composite sort to ObjectEntryHelper getRecords method.
 - Additional Helper classes can easily be added for reusable code to reduce the complexity of the FreeMarker templates.
 - The DDL 'Display Templates' feature was not intended for displaying large quantities of data, the same applies to this widget.
+  - Adding pagination support to the widget should be possible if the Liferay Object has many records.
 
 ## Environment ##
 - The module was built and tested with 2025.Q1.0 (Liferay Workspace gradle.properties > liferay.workspace.product = dxp-2025.q1.0-lts)
