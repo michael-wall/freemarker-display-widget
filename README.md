@@ -17,7 +17,12 @@
 - Object Scope
   - Works with both Company and Site Scoped Objects.
 - Localization Aware
-  - Does not require Liferay Objects to be Translation enabled, even if the Virtual Instance has multiple Languages enabled.
+  - If Object Entries are not to be translated then turn 'Enable Entry Translation' off when the Object Definition is being created.  
+  - If 'Enable Entry Translation' is enabled and the user is authenticated then the Locale used is themeDisplay.getLocale().
+  - If 'Enable Entry Translation' is enabled and the user is unauthenticated then the Locale used is LocaleUtil.getDefault().
+  - If 'Enable Entry Translation' is disabled then the Locale used is LocaleUtil.getDefault().
+  - Be aware that enabling 'Enable Entry Translation' and not translating field values for a language may result in empty field values being displayed if that language is used by the widget.
+  Does not require Liferay Objects to be Translation enabled, even if the Virtual Instance has multiple Languages enabled.
   - Uses the current users locale for authenticated users or the Default Locale for Guest users.
 - Configuration Driven
   - TemplateObjectDefinition Liferay Object stores FreeMarker Templates.

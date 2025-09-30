@@ -175,7 +175,9 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			_log.info("RelationshipName: " + objectRelationship.getName());
 		}
 		
-		Locale locale = LocaleUtil.getDefault(); // Virtual Instance Default Language
+		boolean isEnableLocalization = sourceObjectDefinition.isEnableLocalization();
+		
+		_log.info("isEnableLocalization: " + isEnableLocalization);
 	
 		try {
 			TemplateResource templateResource = new StringTemplateResource(templateId, templateContent);
@@ -183,8 +185,19 @@ public class FreeMarkerDisplayPortlet extends MVCPortlet {
 			_templateContextHelper.prepare(template, themeDisplay.getRequest());
 
 			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.OBJECT_DEFINITION, sourceObjectDefinition);
-			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LOCALE, locale); 
-			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LANGUAGE_ID, locale.toString()); 
+			
+			Locale locale = null;
+			
+			if (isEnableLocalization && themeDisplay.isSignedIn()) {
+				 // Use locale from themeDisplay if authenticated user and isEnableLocalization is true...
+				locale = themeDisplay.getLocale();
+			} else {
+				// Use Virtual Instance Default Language if Guest user or isEnableLocalization is false...
+				locale = LocaleUtil.getDefault();		
+			}
+			
+			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LOCALE, locale);
+			template.put(FreeMarkerConstants.FREEMARKER_VARIABLES.LANGUAGE_ID, locale.toString());
 
 			for (Map.Entry<String, List<ListTypeEntry>> picklist : picklistsMap.entrySet()) {
 				String key = FreeMarkerConstants.FREEMARKER_VARIABLES.PICKLIST_PREFIX + picklist.getKey();
