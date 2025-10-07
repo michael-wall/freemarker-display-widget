@@ -126,8 +126,8 @@
 
 ## Known Limitations / TODO ##
 - The implementation doesn't currently handle Many to Many relationships. Additional methods can be added to RelationshipHelper.java to support Many to Many relationships.
-- Further approvements can be made e.g. to add support for composite sort to ObjectEntryHelper getRecords method.
-- Additional Helper classes can easily be added for reusable code to reduce the complexity of the FreeMarker templates.
+- Further improvements can be made e.g. to add support for composite sort to ObjectEntryHelper getRecords method.
+- Additional Helper classes can easily be added for reusable code to further reduce the complexity of the FreeMarker templates.
 - The DDL 'Display Templates' feature was not intended for displaying large quantities of data, the same applies to this widget.
   - Adding pagination support to the widget should be possible if the Liferay Object has many records.
 
