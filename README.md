@@ -1,8 +1,8 @@
 ## Introduction ##
 - This is an OSGi based Liferay MVC Widget that uses FreeMarker Templates to display Liferay Objects recordsets.
+  - The solution is OSGi based so is compatible with Liferay PaaS and Liferay Self Hosted but is not compatible with Liferay SaaS.
 - The Liferay DDL functionality is deprecated and marked for removal.
-  - Liferay Objects is the replacement for DDL.
-  -  See [here](https://learn.liferay.com/w/dxp/low-code/forms/dynamic-data-lists/migrating-to-liferay-objects) for more information on DDL to Liferay Objects migration.
+  - Liferay Objects is the replacement for DDL. See [here](https://learn.liferay.com/w/dxp/low-code/forms/dynamic-data-lists/migrating-to-liferay-objects) for more information on DDL to Liferay Objects migration.
 - This widget was built as a POC for the use case of a customer migrating existing DDL Lists to Liferay Objects where the customer use the DDL 'Display Templates' functionality.
 - It is intended as a replacement for the DDL 'Display Templates' functionality for DDL Lists that have been migrated from DDL to Liferay Objects.
 
@@ -125,7 +125,8 @@
 ![Student List](screenshots/student_list.jpg)
 
 ## Known Limitations / TODO ##
-- The implementation doesn't currently handle Many to Many relationships. Additional methods can be added to RelationshipHelper.java to support Many to Many relationships.
+- The implementation doesn't currently handle Many to Many relationships.
+  - Additional methods can be added to RelationshipHelper.java to support Many to Many relationships.
 - Further improvements can be made e.g. to add support for composite sort to ObjectEntryHelper getRecords method.
 - Additional Helper classes can easily be added for reusable code to further reduce the complexity of the FreeMarker templates.
 - The DDL 'Display Templates' feature was not intended for displaying large quantities of data, the same applies to this widget.
@@ -137,3 +138,4 @@
 
 ## Notes ##
 - This is a ‘proof of concept’ that is being provided ‘as is’ without any support coverage or warranty.
+- The solution is OSGi based so is compatible with Liferay PaaS and Liferay Self Hosted but is not compatible with Liferay SaaS.
